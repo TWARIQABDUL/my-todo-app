@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My To-Do List</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <header>
+    <nav class="nav-left">
+      <h1>My Todo App</h1>
+      <ul>
+        <li><button data-mytask="mytask"><img src="images/list.png" alt="">Todays Task </button></li>
+        <li><button data-mytask="completed"> <img src="images/com.png" alt="">Completed Task </button></li>
+        <li><button data-mytask="add"> <img src="images/add.png" alt="">AddTask </button></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <div class="task-cotainer">
+      <div class="tasks">
+        <h1>Creating to doo app</h1>
+        <div class="duration">
+          <p>today 8:30 PM <span class="complete pending failed"></span></p>
+        </div>
+      </div>
+      <div class="tasks">
+        <h1>Creating to doo app</h1>
+        <div class="duration">
+          <p>today 8:30 PM <span class="complete pending failed"></span></p>
+        </div>
+      </div>
+      <div class="tasks">
+        <h1>Creating to doo app</h1>
+        <div class="duration">
+          <p>today 8:30 PM <span class="complete pending failed"></span></p>
+        </div>
+      </div>
+      <div class="tasks">
+        <h1>Creating to doo app</h1>
+        <div class="duration">
+          <p>today 8:30 PM <span class="complete pending failed"></span></p>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div class="modol">
+    <div class="container">
+      <form>
+        <div class="input-container">
+          <input type="text" id="task-title" placeholder=" ">
+          <label for="task-title">Task Title</label>
+        </div>
+
+        <div class="date">
+          <div class="input-container">
+            <input type="date" id="start-date" placeholder=" ">
+            <label for="start-date">Date To Start</label>
+          </div>
+          <div class="input-container">
+            <input type="date" id="end-date" placeholder=" ">
+            <label for="end-date">Date To End</label>
+          </div>
+        </div>
+
+        <div class="date">
+          <div class="input-container">
+            <input type="time" id="start-time" placeholder=" ">
+            <label for="start-time">Time To Start</label>
+          </div>
+          <div class="input-container">
+            <input type="time" id="end-time" placeholder=" ">
+            <label for="end-time">Time To End</label>
+          </div>
+        </div>
+
+        <div class="input-container">
+          <textarea id="task-details" cols="6" placeholder=" "></textarea>
+          <label for="task-details">Task Details</label>
+        </div>
+
+        
+      </form>
+<button type="submit" data-mytask="submit">Add</button>
+
+    </div>
+    <button id="close">
+      <img src="images/icon-close.svg" alt="">
+    </button>
+  </div>
+  <!-- <div class="container">
+    <h1>📝 My To-Do List</h1>
+    <div class="input-container">
+      <input type="text" id="taskInput" placeholder="Add a new task..." />
+      <button onclick="addTask()">Add</button>
+    </div>
+    <ul id="taskList"></ul>
+  </div> -->
+
+  <script src="js/main.js"></script>
+</body>
+
+</html>
