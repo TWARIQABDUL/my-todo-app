@@ -1,6 +1,7 @@
 const actionButtons = document.querySelectorAll("button")
 const task_cotainer = document.querySelector(".task-cotainer")
 const close = document.getElementById("close")
+const info_container= document.querySelector(".info-containe")
 const modol = document.querySelector(".modol")
 const form = document.querySelector("form")
 const taskTitle = document.getElementById("task-title")
@@ -69,6 +70,7 @@ actionButtons.forEach(btn=>{
 
 const testing = [
   {
+    id:100,
     title:"Building Todo app",
     description:"Some description are to go here",
     start_time: "11:20 PM",
@@ -80,6 +82,7 @@ const testing = [
     
   },
   {
+    id:101,
     title:"Building full stack app",
     description:"Some description are to go here",
     start_time: "11:20 PM",
@@ -93,12 +96,18 @@ const testing = [
 const appendTask=(task)=>{
   let task_div = document.createElement("div")
   task_div.classList.add("tasks")
+  task_div.dataset.id=task.id
   task_div.innerHTML = `
   <h1>${task.title}</h1>
         <div class="duration">
           <p>today ${task.end_time}<span class="${task.statuses}"></span></p>
         </div>
   `
+  task_div.addEventListener("click",()=>{
+    console.log(task_div.dataset);
+    displyTaskInfo(task_div.dataset.id)
+    
+  })
   task_cotainer.appendChild(task_div)
 }
 
@@ -116,11 +125,39 @@ const displayCompletedTasks = (tasks)=>{
 const displayTasks = (tasks)=>{
   tasks.map((task)=>appendTask(task))
 }
+const displyTaskInfo=(id)=>{
+  let selected = testing.filter(a=>{
+    return a.id == id
+    
+  })
+  
+  info_container.style.display="block"
 
+  info_container.innerHTML=`
+  <div class="info">
+    <h3>${selected[0].title}</h3>
+    <p>${selected[0].description}.</p>
+      <div class="btn">
+        <button data-mark_id="${id}">Mark Us Complete</button>
+      <button data-delete_id="${id}">Delete</button>
+      </div>
+      <button id="close-1">
+      <img src="images/icon-close.svg" alt="">
+    </button>
+  </div>
+  `
+let close_info = document.getElementById("close-1")
+
+  close_info.addEventListener("click",()=>{
+  
+  info_container.style.display= "none"
+})
+}
 
 const saveData =(data)=>{
 
   let newTask = {
+    id:200,
      title:data.taskTitle,
     description:data.taskDetails,
     start_time: data.startTime,
