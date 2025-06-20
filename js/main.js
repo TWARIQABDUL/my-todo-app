@@ -1,17 +1,17 @@
 const actionButtons = document.querySelectorAll("button")
 const task_cotainer = document.querySelector(".task-cotainer")
 const close = document.getElementById("close")
-const info_container= document.querySelector(".info-containe")
+const info_container = document.querySelector(".info-containe")
 const modol = document.querySelector(".modol")
 const form = document.querySelector("form")
 const taskTitle = document.getElementById("task-title")
-const startDate= document.getElementById("start-date")
+const startDate = document.getElementById("start-date")
 const endDate = document.getElementById("end-date")
 const startTime = document.getElementById("start-time")
 const taskDetails = document.getElementById("task-details")
 const endTime = document.getElementById("end-time")
 
-form.addEventListener("submit",(e)=>{
+form.addEventListener("submit", (e) => {
   e.preventDefault
 })
 function getFormData() {
@@ -60,143 +60,180 @@ function addTask() {
   input.value = "";
 }
 
-actionButtons.forEach(btn=>{
-  btn.addEventListener("click",()=>{
+const fetchData = (path) => {
+  let url = `https://dummyjson.com/${path}`
+
+  fetch(url)
+    .then(res => res.json())
+    .then(resp=> resp.todos);
+
+}
+actionButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
     console.log(btn.dataset.mytask);
     displayControler(btn.dataset.mytask)
-    
+
   })
 })
 
+
 const testing = [
   {
-    id:100,
-    title:"Building Todo app",
-    description:"Some description are to go here",
+    id: 100,
+    title: "Building Todo app",
+    description: "Some description are to go here",
     start_time: "11:20 PM",
     end_time: "11:20 PM",
     start_date: "22 May 2021",
     end_date: " 25 May 2021",
-    statuses:"pending",
+    statuses: "pending",
+      // id: 10,
+      // todo: "Write a thank you letter to an influential person in your life",
+      // completed: true,
+      // userId: 9
 
-    
   },
   {
-    id:101,
-    title:"Building full stack app",
-    description:"Some description are to go here",
+    id: 101,
+    title: "Building full stack app",
+    description: "Some description are to go here",
     start_time: "11:20 PM",
     end_time: "11:20 PM",
     start_date: "22 May 2021",
     end_date: " 25 May 2021",
-    statuses:"complete"
+    statuses: "complete"
   }
 ]
 
-const appendTask=(task)=>{
+const appendTask = (task) => {
   let task_div = document.createElement("div")
   task_div.classList.add("tasks")
-  task_div.dataset.id=task.id
+  task_div.dataset.id = task.id
   task_div.innerHTML = `
   <h1>${task.title}</h1>
         <div class="duration">
           <p>today ${task.end_time}<span class="${task.statuses}"></span></p>
         </div>
   `
-  task_div.addEventListener("click",()=>{
+  task_div.addEventListener("click", () => {
     console.log(task_div.dataset);
     displyTaskInfo(task_div.dataset.id)
-    
+
   })
   task_cotainer.appendChild(task_div)
 }
 
 // this function will loop through all tasks and call the display function on each
-const displayCompletedTasks = (tasks)=>{
-  let sortedTasks = tasks.filter(a=>{
+const displayCompletedTasks = (tasks) => {
+  let sortedTasks = tasks.filter(a => {
     // console.log(a.statuses);
-    
+
     return a.statuses.includes("complete")
   })
   console.log(sortedTasks);
-  
-  sortedTasks.map((task)=>appendTask(task))
-}
-const displayTasks = (tasks)=>{
-  tasks.map((task)=>appendTask(task))
-}
-const displyTaskInfo=(id)=>{
-  let selected = testing.filter(a=>{
-    return a.id == id
-    
-  })
-  
-  info_container.style.display="block"
 
-  info_container.innerHTML=`
+  sortedTasks.map((task) => appendTask(task))
+}
+const displayTasks = (tasks) => {
+  tasks.map((task) => appendTask(task))
+}
+const displyTaskInfo = (id) => {
+  let selected = testing.filter(a => {
+    return a.id == id
+
+  })
+
+  info_container.style.display = "block"
+
+  info_container.innerHTML = `
   <div class="info">
     <h3>${selected[0].title}</h3>
     <p>${selected[0].description}.</p>
       <div class="btn">
-        <button data-mark_id="${id}">Mark Us Complete</button>
-      <button data-delete_id="${id}">Delete</button>
+        <button id="complete" data-mark_id="${id}">Mark Us Complete</button>
+      <button id="delete-task" data-delete_id="${id}">Delete</button>
       </div>
       <button id="close-1">
       <img src="images/icon-close.svg" alt="">
     </button>
   </div>
   `
-let close_info = document.getElementById("close-1")
+  let close_info = document.getElementById("close-1")
+  let complete = document.getElementById("complete")
+  let delete_task = document.getElementById("delete-task")
 
-  close_info.addEventListener("click",()=>{
-  
-  info_container.style.display= "none"
-})
+  complete.addEventListener("click", () => {
+
+    info_container.style.display = "none"
+  })
+  delete_task.addEventListener("click", () => {
+
+    deleTask(delete_task.dataset.delete_id)
+    // info_container.style.display = "none"
+  })
+  close_info.addEventListener("click", () => {
+
+    info_container.style.display = "none"
+  })
 }
 
-const saveData =(data)=>{
+const saveData = (data) => {
 
   let newTask = {
-    id:200,
-     title:data.taskTitle,
-    description:data.taskDetails,
+    id: 200,
+    title: data.taskTitle,
+    description: data.taskDetails,
     start_time: data.startTime,
     end_time: data.endTime,
     start_date: data.startDate,
     end_date: data.endDate,
-    statuses:"pending"
+    statuses: "pending"
   }
   testing.push(newTask)
-  task_cotainer.innerHTML=""
+  task_cotainer.innerHTML = ""
   displayTasks(testing)
 }
-const displayControler =(data)=>{
+
+// delete task 
+const deleTask=(id)=>{
+  let element = testing.findIndex(elem=>{
+    return elem.id == id
+  })
+  // console.log(element);
+  testing.splice(element,1)
+  task_cotainer.innerHTML = ""
+  displayTasks(testing)
+  // console.log(element);
+  
+}
+const displayControler = (data) => {
   switch (data) {
     case "add":
-      modol.style.display="flex"
+      modol.style.display = "flex"
       break;
     case "mytask":
-      task_cotainer.innerHTML=""
+      task_cotainer.innerHTML = ""
+      // let list = fetchData("todos")
       displayTasks(testing)
       break
     case "completed":
-      task_cotainer.innerHTML=""
+      task_cotainer.innerHTML = ""
       displayCompletedTasks(testing)
       break
     case "submit":
       let data = getFormData()
       saveData(data)
-      modol.style.display="none"
+      modol.style.display = "none"
       console.log(data);
-      
+
     default:
-      break;
+      task_cotainer.innerHTML = ""
+      displayTasks(testing)
+      break
   }
-  // modol.style.display= "flex"
+
 }
-// const appendTask = (task)=>{
-//   task_cotainer.children.append("hhhh")
-// }
-close.addEventListener("click",()=>{
-  modol.style.display= "none"
+displayControler()
+close.addEventListener("click", () => {
+  modol.style.display = "none"
 })
