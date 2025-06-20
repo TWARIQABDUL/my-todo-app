@@ -65,47 +65,34 @@ const fetchData = (path) => {
 
   fetch(url)
     .then(res => res.json())
-    .then(resp=> resp.todos);
+    .then(resp => resp.todos);
 
 }
 actionButtons.forEach(btn => {
   btn.addEventListener("click", () => {
-    console.log(btn.dataset.mytask);
+    // console.log(btn.dataset.mytask);
     displayControler(btn.dataset.mytask)
 
   })
 })
 
+if (!localStorage.getItem("tasks")) {
+  localStorage.setItem("tasks", JSON.stringify(
+    [
 
-const testing = [
-  {
-    id: 100,
-    title: "Building Todo app",
-    description: "Some description are to go here",
-    start_time: "11:20 PM",
-    end_time: "11:20 PM",
-    start_date: "22 May 2021",
-    end_date: " 25 May 2021",
-    statuses: "pending",
-      // id: 10,
-      // todo: "Write a thank you letter to an influential person in your life",
-      // completed: true,
-      // userId: 9
+    ]
+  ));
+}
 
-  },
-  {
-    id: 101,
-    title: "Building full stack app",
-    description: "Some description are to go here",
-    start_time: "11:20 PM",
-    end_time: "11:20 PM",
-    start_date: "22 May 2021",
-    end_date: " 25 May 2021",
-    statuses: "complete"
-  }
-]
 
+let testing = JSON.parse(localStorage.getItem("tasks"))
+
+
+// adds task to the display
 const appendTask = (task) => {
+  let items = localStorage.getItem("tasks")
+  // console.log(JSON.parse(items));
+
   let task_div = document.createElement("div")
   task_div.classList.add("tasks")
   task_div.dataset.id = task.id
@@ -116,7 +103,7 @@ const appendTask = (task) => {
         </div>
   `
   task_div.addEventListener("click", () => {
-    console.log(task_div.dataset);
+    // console.log(task_div.dataset);
     displyTaskInfo(task_div.dataset.id)
 
   })
@@ -130,11 +117,13 @@ const displayCompletedTasks = (tasks) => {
 
     return a.statuses.includes("complete")
   })
-  console.log(sortedTasks);
+  // console.log(sortedTasks);
 
   sortedTasks.map((task) => appendTask(task))
 }
 const displayTasks = (tasks) => {
+  // console.log(tasks);
+
   tasks.map((task) => appendTask(task))
 }
 const displyTaskInfo = (id) => {
@@ -163,12 +152,13 @@ const displyTaskInfo = (id) => {
   let delete_task = document.getElementById("delete-task")
 
   complete.addEventListener("click", () => {
-
-    info_container.style.display = "none"
+    updateTaskStustu(complete.dataset.mark_id)
+    // info_container.style.display = "none"
   })
   delete_task.addEventListener("click", () => {
 
     deleTask(delete_task.dataset.delete_id)
+    info_container.style.display = "none"
     // info_container.style.display = "none"
   })
   close_info.addEventListener("click", () => {
@@ -179,8 +169,12 @@ const displyTaskInfo = (id) => {
 
 const saveData = (data) => {
 
+  
+  let prev = JSON.parse(localStorage.getItem("tasks"))
+  let lastId = prev.length
+  // console.log(lastId);
   let newTask = {
-    id: 200,
+    id: lastId == 0 ? 1 : prev[lastId-1].id+1,
     title: data.taskTitle,
     description: data.taskDetails,
     start_time: data.startTime,
@@ -189,23 +183,51 @@ const saveData = (data) => {
     end_date: data.endDate,
     statuses: "pending"
   }
+
+  prev.push(newTask)
+
+  localStorage.setItem("tasks", JSON.stringify(prev))
   testing.push(newTask)
   task_cotainer.innerHTML = ""
   displayTasks(testing)
 }
+// mark completed task
+const updateTaskStustu = (id) => {
+  let prev = JSON.parse(localStorage.getItem("tasks"))
+  // prev.push(newTask)
 
+  let element = prev.findIndex(elem => {
+    return elem.id == id
+  })
+  prev[element].statuses = "complete"
+  localStorage.setItem("tasks", JSON.stringify(prev))
+
+  // console.log("updating");
+  // console.log(element);
+  testing[element].statuses = "complete"
+  task_cotainer.innerHTML = ""
+  displayTasks(prev)
+}
 // delete task 
-const deleTask=(id)=>{
-  let element = testing.findIndex(elem=>{
+const deleTask = (id) => {
+  let prev = JSON.parse(localStorage.getItem("tasks"))
+
+  let element = prev.findIndex(elem => {
     return elem.id == id
   })
   // console.log(element);
-  testing.splice(element,1)
+  prev.splice(element, 1)
+  localStorage.setItem("tasks", JSON.stringify(prev))
+  testing = prev
   task_cotainer.innerHTML = ""
-  displayTasks(testing)
-  // console.log(element);
+  // console.log("hellop",prev);
   
+  displayTasks(prev)
+  // console.log(element);
+
 }
+
+// controls which tap to show
 const displayControler = (data) => {
   switch (data) {
     case "add":
@@ -224,7 +246,7 @@ const displayControler = (data) => {
       let data = getFormData()
       saveData(data)
       modol.style.display = "none"
-      console.log(data);
+      // console.log(data);
 
     default:
       task_cotainer.innerHTML = ""
