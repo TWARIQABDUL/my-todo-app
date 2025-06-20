@@ -167,7 +167,7 @@
 
     textarea {
       height: 120px;
-      resize: none;
+      /* resize: none; */
       font-size: 17px;
       letter-spacing: 1px;
     }

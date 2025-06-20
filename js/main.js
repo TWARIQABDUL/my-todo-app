@@ -169,12 +169,12 @@ const displyTaskInfo = (id) => {
 
 const saveData = (data) => {
 
-  
+
   let prev = JSON.parse(localStorage.getItem("tasks"))
   let lastId = prev.length
   // console.log(lastId);
   let newTask = {
-    id: lastId == 0 ? 1 : prev[lastId-1].id+1,
+    id: lastId == 0 ? 1 : prev[lastId - 1].id + 1,
     title: data.taskTitle,
     description: data.taskDetails,
     start_time: data.startTime,
@@ -221,7 +221,7 @@ const deleTask = (id) => {
   testing = prev
   task_cotainer.innerHTML = ""
   // console.log("hellop",prev);
-  
+
   displayTasks(prev)
   // console.log(element);
 
@@ -246,7 +246,19 @@ const displayControler = (data) => {
       let data = getFormData()
       saveData(data)
       modol.style.display = "none"
-      // console.log(data);
+      break
+    case "sugestion":
+      let inputs = getFormData()
+      let prompt = `
+      I have this task named ${inputs.taskTitle} I plan to start it ${inputs.startDate} at ${inputs.startTime}
+      and end it at ${inputs.endDate} at ${inputs.endTime} I want you to generate the act as my counseralor
+      and advise me how I can perform this task not more than 50 words focuss on key important detail      `
+      suggestion(prompt)
+      // console.log();
+      
+      // saveData(data)
+      // modol.style.display = "none"
+    // console.log(data);
 
     default:
       task_cotainer.innerHTML = ""
@@ -259,3 +271,34 @@ displayControler()
 close.addEventListener("click", () => {
   modol.style.display = "none"
 })
+
+// open ai sugestion
+const myKey = "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"
+
+const suggestion = (prompt) => {
+  fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${myKey}`, // Make sure this is a valid key
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "deepseek/deepseek-r1-0528:free",
+      messages: [
+        {
+          role: "user",
+          content: prompt
+        }
+      ]
+    })
+  })
+    .then((response) => response.json()) // ✅ convert stream to JSON
+    .then((data) => {
+      console.log(data);
+      taskDetails.value = data.choices[0].message.content
+      console.log("Generated:", data.choices[0].message.content); // ✅ Access generated text
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+};
