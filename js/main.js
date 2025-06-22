@@ -10,6 +10,9 @@ const endDate = document.getElementById("end-date")
 const startTime = document.getElementById("start-time")
 const taskDetails = document.getElementById("task-details")
 const endTime = document.getElementById("end-time")
+const submitBtn = document.querySelector(".submit")
+const updateBtn = document.querySelector(".update")
+
 
 form.addEventListener("submit", (e) => {
   e.preventDefault
@@ -102,6 +105,7 @@ const appendTask = (task) => {
           <p>today ${task.end_time}<span class="${task.statuses}"></span></p>
         </div>
   `
+  updateBtn.dataset.id = task_div.dataset.id
   task_div.addEventListener("click", () => {
     // console.log(task_div.dataset);
     displyTaskInfo(task_div.dataset.id)
@@ -141,6 +145,7 @@ const displyTaskInfo = (id) => {
       <div class="btn">
         <button id="complete" data-mark_id="${id}">Mark Us Complete</button>
       <button id="delete-task" data-delete_id="${id}">Delete</button>
+      <button id="update-task" data-mytask="update" data-update_id="${id}">Update Task</button>
       </div>
       <button id="close-1">
       <img src="images/icon-close.svg" alt="">
@@ -150,7 +155,7 @@ const displyTaskInfo = (id) => {
   let close_info = document.getElementById("close-1")
   let complete = document.getElementById("complete")
   let delete_task = document.getElementById("delete-task")
-
+  let update_task = document.getElementById("update-task")
   complete.addEventListener("click", () => {
     updateTaskStustu(complete.dataset.mark_id)
     // info_container.style.display = "none"
@@ -160,7 +165,13 @@ const displyTaskInfo = (id) => {
     deleTask(delete_task.dataset.delete_id)
     info_container.style.display = "none"
     // info_container.style.display = "none"
+  })  
+  update_task.addEventListener("click", () => {
+
+    editTask(update_task.dataset.update_id)
+    // info_container.style.display = "none"
   })
+
   close_info.addEventListener("click", () => {
 
     info_container.style.display = "none"
@@ -208,6 +219,29 @@ const updateTaskStustu = (id) => {
   task_cotainer.innerHTML = ""
   displayTasks(prev)
 }
+// Update Task
+const updateTask = (id)=>{
+  let formdata = getFormData()
+  let prev = JSON.parse(localStorage.getItem("tasks"))
+  // prev.push(newTask)
+
+  let element = prev.findIndex(elem => {
+    return elem.id == id
+  })
+
+  prev[element].title = formdata.taskTitle
+  prev[element].description = formdata.taskDetails
+  prev[element].startDate = formdata.startDate
+  prev[element].endDate = formdata.endDate
+  prev[element].startTime= formdata.startTime
+  prev[element].endTime = formdata.endTime
+
+  localStorage.setItem("tasks", JSON.stringify(prev))
+  testing = prev
+  task_cotainer.innerHTML=""
+  displayTasks(prev)
+  modol.style.display="none"
+}
 // delete task 
 const deleTask = (id) => {
   let prev = JSON.parse(localStorage.getItem("tasks"))
@@ -226,11 +260,44 @@ const deleTask = (id) => {
   // console.log(element);
 
 }
+// edit the task
+const editTask =(id)=>{
+  controlModal("update")
+  let tasks = JSON.parse(localStorage.getItem("tasks"))
+  let task = tasks.findIndex(elem=>elem.id == id)
+  console.log(task);
+  modol.style.display ="flex"
+  taskTitle.value = tasks[task].title
+  startDate.value = tasks[task].start_date
+  endDate.value = tasks[task].end_date
+  startTime.value = tasks[task].start_time
+  taskDetails.value = tasks[task].description
+  endTime.value = tasks[task].end_time
 
+  
+  let data = getFormData()
+  
+  // let newData = getFormData()
+}
+// control Modal
+
+const controlModal =(modal="submit")=>{
+    console.log(modal);
+
+  if (modal == "update") {
+    modol.style.display = "flex"
+    submitBtn.style.display="none"
+    updateBtn.style.display="block"
+    
+  }else{
+    submitBtn.style.display="block"
+  }
+}
 // controls which tap to show
 const displayControler = (data) => {
   switch (data) {
     case "add":
+      // controlModal()
       modol.style.display = "flex"
       break;
     case "mytask":
@@ -254,9 +321,14 @@ const displayControler = (data) => {
       and end it at ${inputs.endDate} at ${inputs.endTime} I want you to generate the act as my counseralor
       and advise me how I can perform this task not more than 50 words focuss on key important detail      `
       suggestion(prompt)
-      // console.log();
+      break
+    case "update":
+      // controlModal("update")
+      updateTask(updateBtn.dataset.id);
+      console.log(updateBtn.dataset.id);
+      break
       
-      // saveData(data)
+      // saveData(data).id
       // modol.style.display = "none"
     // console.log(data);
 
@@ -273,7 +345,7 @@ close.addEventListener("click", () => {
 })
 
 // open ai sugestion
-const myKey = "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"
+const myKey = "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"
 
 const suggestion = (prompt) => {
   fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -292,11 +364,11 @@ const suggestion = (prompt) => {
       ]
     })
   })
-    .then((response) => response.json()) // ✅ convert stream to JSON
+    .then((response) => response.json())
     .then((data) => {
       console.log(data);
-      taskDetails.value = data.choices[0].message.content
-      console.log("Generated:", data.choices[0].message.content); // ✅ Access generated text
+      taskDetails.value = data.choices[0].message.content.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1');
+      console.log("Generated:", data.choices[0].message.content.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1'))
     })
     .catch((error) => {
       console.error("Error:", error);
