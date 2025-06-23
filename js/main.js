@@ -240,7 +240,17 @@ const updateTask = (id)=>{
   testing = prev
   task_cotainer.innerHTML=""
   displayTasks(prev)
+  cleeanInput()
   modol.style.display="none"
+}
+const cleeanInput=()=>{
+  // modol.style.display ="flex"
+  taskTitle.value = ""
+  startDate.value = ""
+  endDate.value = ""
+  startTime.value = ""
+  taskDetails.value = ""
+  endTime.value = ""
 }
 // delete task 
 const deleTask = (id) => {
@@ -275,14 +285,14 @@ const editTask =(id)=>{
   endTime.value = tasks[task].end_time
 
   
-  let data = getFormData()
+  // let data = getFormData()
   
   // let newData = getFormData()
 }
 // control Modal
 
 const controlModal =(modal="submit")=>{
-    console.log(modal);
+    // console.log(modal);
 
   if (modal == "update") {
     modol.style.display = "flex"
@@ -290,6 +300,7 @@ const controlModal =(modal="submit")=>{
     updateBtn.style.display="block"
     
   }else{
+    updateBtn.style.display="none"
     submitBtn.style.display="block"
   }
 }
@@ -297,7 +308,7 @@ const controlModal =(modal="submit")=>{
 const displayControler = (data) => {
   switch (data) {
     case "add":
-      // controlModal()
+      controlModal()
       modol.style.display = "flex"
       break;
     case "mytask":
@@ -351,7 +362,7 @@ const suggestion = (prompt) => {
   fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${myKey}`, // Make sure this is a valid key
+      "Authorization": `Bearer ${myKey}`, 
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
