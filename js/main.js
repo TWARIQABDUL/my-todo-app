@@ -302,6 +302,7 @@ const controlModal =(modal="submit")=>{
   }else{
     updateBtn.style.display="none"
     submitBtn.style.display="block"
+    cleeanInput()
   }
 }
 // controls which tap to show
